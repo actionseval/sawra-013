@@ -19,7 +19,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
         run: |
-          python3.9-distutils
+          # python3.9-distutils
           pip install flake8==7.3.0
       - run: |
           python -m pip install flake8
@@ -43,7 +43,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
         run: |
-          python3.9-distutils
+          # python3.9-distutils
           pip install importlib_metadata==8.7.1
       - run: |
           python -m pip install --upgrade pip wheel
