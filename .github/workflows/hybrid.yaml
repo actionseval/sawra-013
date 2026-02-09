@@ -1,0 +1,56 @@
+name: CI
+
+# on: [push, pull_request]
+on: [repository_dispatch, workflow_dispatch]
+
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - '3.9'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          python3.9-distutils
+          pip install flake8==7.3.0
+      - run: |
+          python -m pip install flake8
+      - run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      - run: |
+          flake8 . --count --ignore=E1,E2,E3,E501,W291,W293 --exit-zero --max-complexity=65 --max-line-length=127 --statistics
+
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - '3.9'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          python3.9-distutils
+          pip install importlib_metadata==8.7.1
+      - run: |
+          python -m pip install --upgrade pip wheel
+      - run: |
+          python -m pip install tox tox-gh-actions -r requirements.txt -r requirements-test.txt
+      - run: |
+          tox -- -m 'not remote'
+          python setup.py bdist_wheel
+    env:
+      PLAT: linux-x86_64
